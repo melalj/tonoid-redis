@@ -1,5 +1,10 @@
 # @tonoid/redis
 
+[![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://github.com/melalj/tonoid-redis)
+[![GitHub stars](https://img.shields.io/github/stars/melalj/tonoid-redis.svg?style=social&label=Star&maxAge=2592003)]()
+
+[![npm](https://img.shields.io/npm/dt/@tonoid/redis.svg)]() [![npm](https://img.shields.io/npm/v/@tonoid/redis.svg)]() [![npm](https://img.shields.io/npm/l/@tonoid/redis.svg)]() [![David](https://img.shields.io/david/melalj/tonoid-redis.svg)]()
+
 Redis plugin for [@tonoid/helpers](https://github.com/melalj/tonoid-helpers)
 
 ## Init options
@@ -36,4 +41,4 @@ const redis = require('@tonoid/redis');
 
 ## Credits
 
-This module is maintained by [tonoid](https://www.tonoid.com)
+This module is maintained by [Simo Elalj](https://twitter.com/simoelalj) @[tonoid](https://www.tonoid.com)

@@ -8,62 +8,62 @@ const defaultConfig = {
     : {
       host: process.env.REDIS_HOST || 'redis',
       port: Number(process.env.REDIS_PORT || 6379),
-      password: process.env.REDIS_PASSWORD || 'redis',
+      password: process.env.REDIS_PASSWORD,
       db: process.env.REDIS_DB || 0,
     }
   ),
 };
 
-const init = (options = defaultConfig) => async () => {
-  let credentials = {};
-  if (options.url) {
-    const parsedURL = new URL(options.url);
-    credentials = {
-      host: parsedURL.hostname || 'redis',
-      port: Number(parsedURL.port || 6379),
-      password: parsedURL.password ? decodeURIComponent(parsedURL.password) : null,
-      db: (parsedURL.pathname || '/0').substr(1) || '0',
-    };
-  } else {
-    credentials = {
-      host: options.host,
-      port: options.port,
-      password: options.password,
-      db: options.db,
-    };
-  }
+module.exports = (options = defaultConfig) => ({
+  name: 'redis',
+  init: async () => {
+    let credentials = {};
+    if (options.url) {
+      const parsedURL = new URL(options.url);
+      credentials = {
+        host: parsedURL.hostname || 'redis',
+        port: Number(parsedURL.port || 6379),
+        password: parsedURL.password ? decodeURIComponent(parsedURL.password) : null,
+        db: (parsedURL.pathname || '/0').substr(1) || '0',
+      };
+    } else {
+      credentials = {
+        host: options.host,
+        port: options.port,
+        password: options.password,
+        db: options.db,
+      };
+    }
 
-  const redisCache = cacheManager.caching({
-    store: redisStore,
-    ...credentials,
-  });
+    const redisCache = cacheManager.caching({
+      store: redisStore,
+      ...credentials,
+    });
 
-  const getValue = (key) => new Promise((resolve, reject) => redisCache.get(key, (err, value) => {
-    if (err) return reject(err);
-    return resolve(value);
-  }));
-
-  const setValue = (key, value, ttl) => (
-    new Promise((resolve, reject) => redisCache.set(key, value, { ttl }, (err) => {
+    const getValue = (key) => new Promise((resolve, reject) => redisCache.get(key, (err, value) => {
       if (err) return reject(err);
       return resolve(value);
-    }))
-  );
+    }));
 
-  const delValue = (key) => new Promise((resolve, reject) => redisCache.del(key, (err) => {
-    if (err) return reject(err);
-    return resolve();
-  }));
+    const setValue = (key, value, ttl) => (
+      new Promise((resolve, reject) => redisCache.set(key, value, { ttl }, (err) => {
+        if (err) return reject(err);
+        return resolve(value);
+      }))
+    );
 
-  const close = () => {};
+    const delValue = (key) => new Promise((resolve, reject) => redisCache.del(key, (err) => {
+      if (err) return reject(err);
+      return resolve();
+    }));
 
-  return {
-    close,
-    getValue,
-    setValue,
-    delValue,
-  };
-};
+    const close = () => {};
 
-const redisModule = module.exports = init; // eslint-disable-line no-multi-assign
-redisModule.name = 'redis';
+    return {
+      close,
+      getValue,
+      setValue,
+      delValue,
+    };
+  },
+});
