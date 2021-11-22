@@ -2,21 +2,23 @@ const cacheManager = require('cache-manager');
 const redisStore = require('cache-manager-ioredis');
 const { URL } = require('url');
 
-const defaultConfig = {
-  ...(process.env.REDIS_URL
-    ? { url: process.env.REDIS_URL }
-    : {
-      host: process.env.REDIS_HOST || 'redis',
-      port: Number(process.env.REDIS_PORT || 6379),
-      password: process.env.REDIS_PASSWORD,
-      db: process.env.REDIS_DB || 0,
-    }
-  ),
-};
-
-module.exports = (options = defaultConfig) => ({
+module.exports = (customOptions) => ({
   name: 'redis',
   init: async () => {
+    const defaultConfig = {
+      ...(process.env.REDIS_URL
+        ? { url: process.env.REDIS_URL }
+        : {
+          host: process.env.REDIS_HOST || 'redis',
+          port: Number(process.env.REDIS_PORT || 6379),
+          password: process.env.REDIS_PASSWORD,
+          db: process.env.REDIS_DB || 0,
+        }
+      ),
+    };
+
+    const options = customOptions || defaultConfig;
+
     let credentials = {};
     if (options.url) {
       const parsedURL = new URL(options.url);
