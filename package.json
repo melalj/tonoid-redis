@@ -1,6 +1,6 @@
 {
   "name": "@tonoid/redis",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Redis plugin for @tonoid/helpers",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,7 @@
     "eslint-plugin-import": "2.25.3"
   },
   "dependencies": {
-    "cache-manager": "3.6.0",
+    "cache-manager": "5.1.4",
     "cache-manager-ioredis": "2.1.0"
   }
 }
