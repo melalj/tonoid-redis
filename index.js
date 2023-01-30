@@ -1,5 +1,5 @@
 const cacheManager = require('cache-manager');
-const redisStore = require('cache-manager-ioredis');
+const { ioRedisStore } = require('@tirke/node-cache-manager-ioredis');
 const { URL } = require('url');
 
 module.exports = (customOptions) => ({
@@ -37,10 +37,7 @@ module.exports = (customOptions) => ({
       };
     }
 
-    const redisCache = cacheManager.caching({
-      store: redisStore,
-      ...credentials,
-    });
+    const redisCache = cacheManager.caching(ioRedisStore, credentials);
 
     const getValue = (key) => redisCache.get(key);
 
