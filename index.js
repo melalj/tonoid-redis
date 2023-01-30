@@ -42,28 +42,11 @@ module.exports = (customOptions) => ({
       ...credentials,
     });
 
-    const getValue = (key) => new Promise((resolve, reject) => {
-      redisCache.get(key, (err, value) => {
-        if (err) return reject(err);
-        return resolve(value);
-      });
-    });
+    const getValue = (key) => redisCache.get(key);
 
-    const setValue = (key, value, ttl) => (
-      new Promise((resolve, reject) => {
-        redisCache.set(key, value, { ttl }, (err) => {
-          if (err) return reject(err);
-          return resolve(value);
-        });
-      })
-    );
+    const setValue = (key, value, ttl) => redisCache.set(key, value, { ttl });
 
-    const delValue = (key) => new Promise((resolve, reject) => {
-      redisCache.del(key, (err) => {
-        if (err) return reject(err);
-        return resolve();
-      });
-    });
+    const delValue = (key) => redisCache.del(key);
 
     // It seems we do not need to close the connection
     const close = () => {};
