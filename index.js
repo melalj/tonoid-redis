@@ -41,7 +41,7 @@ module.exports = (customOptions) => ({
 
     const getValue = (key) => redisCache.get(key);
 
-    const setValue = (key, value, ttl) => redisCache.set(key, value, { ttl });
+    const setValue = (key, value, ttl) => redisCache.set(key, value, ttl);
 
     const delValue = (key) => redisCache.del(key);
 
