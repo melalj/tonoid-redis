@@ -2,8 +2,8 @@ const { caching } = require('cache-manager');
 const { ioRedisStore } = require('@tirke/node-cache-manager-ioredis');
 const { URL } = require('url');
 
-module.exports = (customOptions) => ({
-  name: 'redis',
+module.exports = (customOptions, ctxName = 'redis') => ({
+  name: ctxName,
   init: async () => {
     const defaultConfig = {
       ...(process.env.REDIS_URL
@@ -17,7 +17,7 @@ module.exports = (customOptions) => ({
       ),
     };
 
-    const options = customOptions || defaultConfig;
+    const options = { ...defaultConfig, ...customOptions };
 
     let credentials = {};
     if (options.url) {
@@ -45,15 +45,24 @@ module.exports = (customOptions) => ({
 
     const delValue = (key) => redisCache.del(key);
 
-    // It seems we do not need to close the connection
-    const close = () => {};
+    const expire = (key, v) => redisCache.expire(key, v);
+
+    const incr = (key) => redisCache.incr(key);
+
+    const decr = (key) => redisCache.decr(key);
+
+    const close = () => redisCache.store.client.quit();
 
     return {
+      name: ctxName,
       close,
       redisCache,
       getValue,
       setValue,
       delValue,
+      expire,
+      incr,
+      decr,
     };
   },
 });

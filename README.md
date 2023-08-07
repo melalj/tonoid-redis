@@ -19,6 +19,9 @@ Redis plugin for [@tonoid/helpers](https://github.com/melalj/tonoid-helpers)
 - `.getValue(key)`: Get a value from redis cache
 - `.setValue(key, value, ttl)`: Set a value in redis cache
 - `.delValue(key)`: Delete a value in redis cache
+- `.expire(key, value)`: Expire a value in redis cache (value in seconds)
+- `.incr(key)`: Increment a value in redis cache
+- `.decr(key)`: Decrement a value in redis cache
 
 ## Usage example
 
