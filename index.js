@@ -47,9 +47,9 @@ module.exports = (customOptions, ctxName = 'redis') => ({
 
     const expire = (key, v) => redisCache.expire(key, v);
 
-    const incr = (key) => redisCache.incr(key);
+    const incr = (key) => redisCache.store.client.incr(key);
 
-    const decr = (key) => redisCache.decr(key);
+    const decr = (key) => redisCache.store.client.decr(key);
 
     const close = () => redisCache.store.client.quit();
 
