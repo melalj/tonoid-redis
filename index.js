@@ -45,7 +45,7 @@ module.exports = (customOptions, ctxName = 'redis') => ({
 
     const delValue = (key) => redisCache.del(key);
 
-    const expire = (key, v) => redisCache.expire(key, v);
+    const expire = (key, v) => redisCache.store.client.expire(key, v);
 
     const incr = (key) => redisCache.store.client.incr(key);
 
