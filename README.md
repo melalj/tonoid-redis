@@ -12,7 +12,8 @@ Redis plugin for [@tonoid/helpers](https://github.com/melalj/tonoid-helpers)
 - `port`: (defaults: `process.env.REDIS_PORT || 6379`) Redis port.
 - `username`: (defaults: `process.env.REDIS_USERNAME`) Redis username.
 - `password`: (defaults: `process.env.REDIS_PASSWORD`) Redis password.
-- `db`: (defaults: `process.env.REDIS_DB || 'admin'`) Redis database.
+- `db`: (defaults: `process.env.REDIS_DB || '0'`) Redis database.
+- `extendOptions`: (default: `{}`) Extend RedisClient options
 
 ## Exported context attributes
 

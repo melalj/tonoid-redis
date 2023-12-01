@@ -1,6 +1,6 @@
 {
   "name": "@tonoid/redis",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Redis plugin for @tonoid/helpers",
   "main": "index.js",
   "scripts": {

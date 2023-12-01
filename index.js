@@ -2,6 +2,16 @@ const { caching } = require('cache-manager');
 const { ioRedisStore } = require('@tirke/node-cache-manager-ioredis');
 const { URL } = require('url');
 
+function isValidUrl(string) {
+  try {
+    // eslint-disable-next-line no-new
+    new URL(string);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
 module.exports = (
   {
     url = process.env.REDIS_URL,
@@ -9,33 +19,27 @@ module.exports = (
     port = process.env.REDIS_PORT || 6379,
     username = process.env.REDIS_USERNAME,
     password = process.env.REDIS_PASSWORD,
-    db = process.env.REDIS_DB || 0,
+    db = process.env.REDIS_DB,
+    extendOptions = {},
   },
   ctxName = 'redis',
 ) => ({
   name: ctxName,
   init: async () => {
-    let credentials = {};
-    if (url) {
-      const parsedURL = new URL(url);
-      credentials = {
-        host: parsedURL.hostname || 'redis',
-        port: Number(parsedURL.port || 6379),
-        username: parsedURL.username ? decodeURIComponent(parsedURL.username) : null,
-        password: parsedURL.password ? decodeURIComponent(parsedURL.password) : null,
-        db: db || (parsedURL.pathname || '/0').slice(1) || '0',
-      };
-    } else {
-      credentials = {
-        host,
-        port,
-        username,
-        password,
-        db,
-      };
-    }
+    // Redis options
+    const parsedURL = isValidUrl(url) ? new URL(url) : {};
+    const redisUsername = parsedURL.username || username;
+    const redisPassword = parsedURL.password || password;
+    const redisClientOptions = {
+      host: parsedURL.hostname || host,
+      port: Number(parsedURL.port || port),
+      username: redisUsername ? decodeURIComponent(redisUsername) : undefined,
+      password: redisPassword ? decodeURIComponent(redisPassword) : undefined,
+      db: db || (parsedURL.pathname || '/0').slice(1) || '0',
+      ...extendOptions,
+    };
 
-    const redisCache = await caching(ioRedisStore, credentials);
+    const redisCache = await caching(ioRedisStore, redisClientOptions);
 
     const getValue = (key) => redisCache.get(key);
 
