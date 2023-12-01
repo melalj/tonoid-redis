@@ -2,38 +2,36 @@ const { caching } = require('cache-manager');
 const { ioRedisStore } = require('@tirke/node-cache-manager-ioredis');
 const { URL } = require('url');
 
-module.exports = (customOptions, ctxName = 'redis') => ({
+module.exports = (
+  {
+    url = process.env.REDIS_URL,
+    host = process.env.REDIS_HOST || 'redis',
+    port = process.env.REDIS_PORT || 6379,
+    username = process.env.REDIS_USERNAME,
+    password = process.env.REDIS_PASSWORD,
+    db = process.env.REDIS_DB || 0,
+  },
+  ctxName = 'redis',
+) => ({
   name: ctxName,
   init: async () => {
-    const defaultConfig = {
-      ...(process.env.REDIS_URL
-        ? { url: process.env.REDIS_URL }
-        : {
-          host: process.env.REDIS_HOST || 'redis',
-          port: Number(process.env.REDIS_PORT || 6379),
-          password: process.env.REDIS_PASSWORD,
-          db: process.env.REDIS_DB || 0,
-        }
-      ),
-    };
-
-    const options = { ...defaultConfig, ...customOptions };
-
     let credentials = {};
-    if (options.url) {
-      const parsedURL = new URL(options.url);
+    if (url) {
+      const parsedURL = new URL(url);
       credentials = {
         host: parsedURL.hostname || 'redis',
         port: Number(parsedURL.port || 6379),
+        username: parsedURL.username ? decodeURIComponent(parsedURL.username) : null,
         password: parsedURL.password ? decodeURIComponent(parsedURL.password) : null,
-        db: (parsedURL.pathname || '/0').substr(1) || '0',
+        db: db || (parsedURL.pathname || '/0').slice(1) || '0',
       };
     } else {
       credentials = {
-        host: options.host,
-        port: options.port,
-        password: options.password,
-        db: options.db,
+        host,
+        port,
+        username,
+        password,
+        db,
       };
     }
 
