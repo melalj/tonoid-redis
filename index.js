@@ -1,3 +1,4 @@
+const deepmerge = require('deepmerge');
 const { createClient } = require('redis');
 const { URL } = require('url');
 
@@ -24,11 +25,19 @@ module.exports = (
   init: async () => {
     // Redis options
     const parsedURL = isValidUrl(url) ? new URL(url) : {};
-    const redisClientOptions = {
-      url,
-      db: db || (parsedURL.pathname || '/0').slice(1) || '0',
-      ...extendOptions,
-    };
+    const redisClientOptions = deepmerge(
+      {
+        url,
+        db: db || (parsedURL.pathname || '/0').slice(1) || '0',
+        socket: {
+          reconnectStrategy: (retries) => {
+            if (retries >= 10) return false;
+            return retries * 500 + 100;
+          },
+        },
+      },
+      extendOptions,
+    );
 
     const redisCache = await createClient(redisClientOptions)
       .on('error', errorHandler)
