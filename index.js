@@ -14,10 +14,6 @@ function isValidUrl(string) {
 module.exports = (
   {
     url = process.env.REDIS_URL,
-    host = process.env.REDIS_HOST || 'redis',
-    port = process.env.REDIS_PORT || 6379,
-    username = process.env.REDIS_USERNAME,
-    password = process.env.REDIS_PASSWORD,
     db = process.env.REDIS_DB,
     errorHandler = () => {},
     extendOptions = {},
@@ -28,13 +24,8 @@ module.exports = (
   init: async () => {
     // Redis options
     const parsedURL = isValidUrl(url) ? new URL(url) : {};
-    const redisUsername = parsedURL.username || username;
-    const redisPassword = parsedURL.password || password;
     const redisClientOptions = {
-      host: parsedURL.hostname || host,
-      port: Number(parsedURL.port || port),
-      username: redisUsername ? decodeURIComponent(redisUsername) : undefined,
-      password: redisPassword ? decodeURIComponent(redisPassword) : undefined,
+      url,
       db: db || (parsedURL.pathname || '/0').slice(1) || '0',
       ...extendOptions,
     };

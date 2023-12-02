@@ -7,11 +7,7 @@ Redis plugin for [@tonoid/helpers](https://github.com/melalj/tonoid-helpers)
 
 ## Init options
 
-- `url`: (defaults: `process.env.REDIS_URL`) Redis url, if set it overrides other auth options.
-- `host`: (defaults: `process.env.REDIS_HOST || 'redis'`) Redis host.
-- `port`: (defaults: `process.env.REDIS_PORT || 6379`) Redis port.
-- `username`: (defaults: `process.env.REDIS_USERNAME`) Redis username.
-- `password`: (defaults: `process.env.REDIS_PASSWORD`) Redis password.
+- `url`: (defaults: `process.env.REDIS_URL`) Redis url
 - `db`: (defaults: `process.env.REDIS_DB || '0'`) Redis database.
 - `extendOptions`: (default: `{}`) Extend RedisClient options
 - `errorHandler`: (default: `(err) => {}`) Handle redis connect eror
@@ -34,10 +30,14 @@ const redis = require('@tonoid/redis');
 
 (async () => {
   await init([
-    redis(),
+    redis({
+      url: 'redis://localhost:6379',
+      db: 0,
+      errorHAndler: (err) => console.error(err)
+    }),
   ]);
 
-  await context.redis.setValue('foo', 'bar');
+  await context.redis.setValue('foo', 'bar', 60); // 1min ttl
   const fooValue = await context.redis.getValue('foo');
   console.log(fooValue);
 })();
