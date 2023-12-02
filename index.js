@@ -1,5 +1,4 @@
-const { caching } = require('cache-manager');
-const { ioRedisStore } = require('@tirke/node-cache-manager-ioredis');
+const { createClient } = require('redis');
 const { URL } = require('url');
 
 function isValidUrl(string) {
@@ -20,6 +19,7 @@ module.exports = (
     username = process.env.REDIS_USERNAME,
     password = process.env.REDIS_PASSWORD,
     db = process.env.REDIS_DB,
+    errorHandler = () => {},
     extendOptions = {},
   },
   ctxName = 'redis',
@@ -39,21 +39,23 @@ module.exports = (
       ...extendOptions,
     };
 
-    const redisCache = await caching(ioRedisStore, redisClientOptions);
+    const redisCache = await createClient(redisClientOptions)
+      .on('error', errorHandler)
+      .connect();
 
     const getValue = (key) => redisCache.get(key);
 
-    const setValue = (key, value, ttl) => redisCache.set(key, value, ttl);
+    const setValue = (key, value, ttl) => redisCache.set(key, value, (ttl ? { EX: ttl } : {}));
 
     const delValue = (key) => redisCache.del(key);
 
-    const expire = (key, v) => redisCache.store.client.expire(key, v);
+    const expire = (key, v) => redisCache.expire(key, v);
 
-    const incr = (key) => redisCache.store.client.incr(key);
+    const incr = (key) => redisCache.incr(key);
 
-    const decr = (key) => redisCache.store.client.decr(key);
+    const decr = (key) => redisCache.decr(key);
 
-    const close = () => redisCache.store.client.quit();
+    const close = () => redisCache.quit();
 
     return {
       name: ctxName,

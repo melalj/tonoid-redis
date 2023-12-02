@@ -14,12 +14,13 @@ Redis plugin for [@tonoid/helpers](https://github.com/melalj/tonoid-helpers)
 - `password`: (defaults: `process.env.REDIS_PASSWORD`) Redis password.
 - `db`: (defaults: `process.env.REDIS_DB || '0'`) Redis database.
 - `extendOptions`: (default: `{}`) Extend RedisClient options
+- `errorHandler`: (default: `(err) => {}`) Handle redis connect eror
 
 ## Exported context attributes
 
 - `.redisCache`: Redis cacheManager instance
 - `.getValue(key)`: Get a value from redis cache
-- `.setValue(key, value, ttl)`: Set a value in redis cache
+- `.setValue(key, value, ttl)`: Set a value in redis cache (ttl in seconds)
 - `.delValue(key)`: Delete a value in redis cache
 - `.expire(key, value)`: Expire a value in redis cache (value in seconds)
 - `.incr(key)`: Increment a value in redis cache
